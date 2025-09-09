@@ -31,18 +31,22 @@ export const HoneyCard = ({ product }: HoneyCardProps) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Card
-          className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2"
-          style={{ backgroundColor: "#FFFFFF", borderColor: "#D4AF37" }}
+          className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 flex flex-col"
+          style={{
+            backgroundColor: "#FFFFFF",
+            borderColor: "#D4AF37",
+            height: "380px",
+          }}
         >
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 flex-shrink-0">
             <div
-              className="w-full h-48 rounded-lg mb-4 flex items-center justify-center"
+              className="w-full h-32 rounded-lg mb-4 flex items-center justify-center"
               style={{ backgroundColor: "#FFF8E1" }}
             >
-              <div className="text-6xl">{product.image}</div>
+              <div className="text-4xl">{product.image}</div>
             </div>
             <CardTitle
-              className="text-lg font-semibold"
+              className="text-lg font-semibold line-clamp-2"
               style={{ color: "#5D4037" }}
             >
               {product.name}
@@ -55,8 +59,11 @@ export const HoneyCard = ({ product }: HoneyCardProps) => {
               {product.region}
             </Badge>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm mb-2" style={{ color: "#8D6E63" }}>
+          <CardContent className="flex-grow flex flex-col justify-between">
+            <p
+              className="text-sm mb-4 line-clamp-3"
+              style={{ color: "#8D6E63" }}
+            >
               {product.description}
             </p>
             <p className="text-lg font-bold" style={{ color: "#D4AF37" }}>
