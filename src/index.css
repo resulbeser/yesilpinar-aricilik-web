@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css2?family=The+Seasons:wght@400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Honey Beekeeping Design System - All colors MUST be HSL */
+
+@layer base {
+  :root {
+    /* Core honey color palette */
+    --honey-gold: 45 93% 47%; /* #F4B400 */
+    --cream-bg: 48 86% 94%; /* #FFF8E1 */
+    --dark-brown: 300 7% 11%; /* #1D1B1D */
+    --earth-brown: 25 47% 29%; /* #6B4A2B */
+    --light-beige: 33 35% 84%; /* #EEDCC5 */
+    --honey-green: 122 65% 22%; /* #1B5E20 */
+
+    /* Design system mappings */
+    --background: var(--light-beige);
+    --foreground: var(--dark-brown);
+
+    --card: var(--cream-bg);
+    --card-foreground: var(--dark-brown);
+
+    --popover: var(--cream-bg);
+    --popover-foreground: var(--dark-brown);
+
+    --primary: var(--honey-gold);
+    --primary-foreground: var(--dark-brown);
+
+    --secondary: var(--earth-brown);
+    --secondary-foreground: var(--cream-bg);
+
+    --muted: var(--light-beige);
+    --muted-foreground: var(--earth-brown);
+
+    --accent: var(--honey-green);
+    --accent-foreground: var(--cream-bg);
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: var(--cream-bg);
+
+    --border: var(--earth-brown);
+    --input: var(--cream-bg);
+    --ring: var(--honey-gold);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+/* Custom honey design components */
+@layer components {
+  .honey-wave {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--honey-gold)) 0%,
+      hsl(var(--earth-brown)) 100%
+    );
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 80%);
+  }
+
+  .honeycomb-pattern {
+    background-image: radial-gradient(
+        circle at 25% 25%,
+        hsl(var(--earth-brown) / 0.1) 2px,
+        transparent 2px
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        hsl(var(--earth-brown) / 0.1) 2px,
+        transparent 2px
+      );
+    background-size: 40px 40px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    /* Debug için geçici stil */
+    background-color: #eedcc5 !important;
+    color: #1d1b1d !important;
+  }
+}
