@@ -5,7 +5,12 @@ export const ProvincesSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [featuresVisible, setFeaturesVisible] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
-  const [animatedNumbers, setAnimatedNumbers] = useState({ provinces: 0, orders: 0, satisfaction: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [animatedNumbers, setAnimatedNumbers] = useState({
+    provinces: 0,
+    orders: 0,
+    satisfaction: 0,
+  });
   const statsRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -183,8 +188,19 @@ export const ProvincesSection = () => {
     TR81: "Düzce",
   };
 
-  const handleProvinceHover = (provinceId: string) =>
+  const handleProvinceHover = (
+    provinceId: string,
+    event?: React.MouseEvent
+  ) => {
     setHoveredProvince(provinceId);
+    if (event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setMousePosition({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      });
+    }
+  };
   const handleProvinceLeave = () => setHoveredProvince(null);
 
   const getProvinceFill = (provinceId: string) => {
@@ -204,7 +220,12 @@ export const ProvincesSection = () => {
   };
 
   // Animasyon fonksiyonu
-  const animateNumber = (start: number, end: number, duration: number, callback: (value: number) => void) => {
+  const animateNumber = (
+    start: number,
+    end: number,
+    duration: number,
+    callback: (value: number) => void
+  ) => {
     const startTime = performance.now();
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -229,19 +250,22 @@ export const ProvincesSection = () => {
             // Animasyonları başlat
             setTimeout(() => {
               animateNumber(0, 15, 1500, (value) => {
-                setAnimatedNumbers(prev => ({ ...prev, provinces: value }));
+                setAnimatedNumbers((prev) => ({ ...prev, provinces: value }));
               });
             }, 200);
-            
+
             setTimeout(() => {
               animateNumber(0, 20, 1500, (value) => {
-                setAnimatedNumbers(prev => ({ ...prev, orders: value }));
+                setAnimatedNumbers((prev) => ({ ...prev, orders: value }));
               });
             }, 400);
-            
+
             setTimeout(() => {
               animateNumber(0, 100, 1500, (value) => {
-                setAnimatedNumbers(prev => ({ ...prev, satisfaction: value }));
+                setAnimatedNumbers((prev) => ({
+                  ...prev,
+                  satisfaction: value,
+                }));
               });
             }, 600);
           }
@@ -305,9 +329,13 @@ export const ProvincesSection = () => {
       <div className="max-w-7xl mx-auto">
         {/* Başlık */}
         <div className="text-center mb-16" ref={headerRef}>
-          <div className={`flex items-center justify-center space-x-3 mb-6 transform transition-all duration-1000 ${
-            headerVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}>
+          <div
+            className={`flex items-center justify-center space-x-3 mb-6 transform transition-all duration-1000 ${
+              headerVisible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0"
+            }`}
+          >
             <span className="text-4xl">🚚</span>
             <div className="h-6 w-px bg-gray-300"></div>
             <span className="text-4xl">📦</span>
@@ -317,12 +345,14 @@ export const ProvincesSection = () => {
 
           <h2
             className={`text-4xl lg:text-5xl font-bold mb-6 transform transition-all duration-1000 ${
-              headerVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+              headerVisible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0"
             }`}
             style={{
               color: "#5D4037",
               fontFamily: "'The Seasons', serif",
-              transitionDelay: '200ms'
+              transitionDelay: "200ms",
             }}
           >
             Türkiye'de{" "}
@@ -331,11 +361,13 @@ export const ProvincesSection = () => {
 
           <p
             className={`text-lg max-w-3xl mx-auto mb-8 transform transition-all duration-1000 ${
-              headerVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+              headerVisible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0"
             }`}
-            style={{ 
+            style={{
               color: "#8D6E63",
-              transitionDelay: '400ms'
+              transitionDelay: "400ms",
             }}
           >
             Doğal ve organik bal ürünlerimizi Türkiye'nin dört bir yanına
@@ -347,21 +379,36 @@ export const ProvincesSection = () => {
             className="flex items-center justify-center space-x-6 text-sm mb-12"
             style={{ color: "#8D6E63" }}
           >
-            <div className={`flex items-center space-x-2 transform transition-all duration-700 ${
-              featuresVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`} style={{ transitionDelay: '200ms' }}>
+            <div
+              className={`flex items-center space-x-2 transform transition-all duration-700 ${
+                featuresVisible
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+              style={{ transitionDelay: "200ms" }}
+            >
               <span className="text-green-600">✓</span>
               <span>Hızlı Teslimat</span>
             </div>
-            <div className={`flex items-center space-x-2 transform transition-all duration-700 ${
-              featuresVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`} style={{ transitionDelay: '400ms' }}>
+            <div
+              className={`flex items-center space-x-2 transform transition-all duration-700 ${
+                featuresVisible
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+              style={{ transitionDelay: "400ms" }}
+            >
               <span className="text-green-600">✓</span>
               <span>Güvenli Ambalaj</span>
             </div>
-            <div className={`flex items-center space-x-2 transform transition-all duration-700 ${
-              featuresVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`} style={{ transitionDelay: '600ms' }}>
+            <div
+              className={`flex items-center space-x-2 transform transition-all duration-700 ${
+                featuresVisible
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+              style={{ transitionDelay: "600ms" }}
+            >
               <span className="text-green-600">✓</span>
               <span>Trabzon İçi Kapıda Ödeme</span>
             </div>
@@ -370,7 +417,16 @@ export const ProvincesSection = () => {
 
         {/* Etkileşimli Türkiye Haritası SVG */}
         <div className="flex justify-center mb-16 relative">
-          <div className="relative group">
+          <div
+            className="relative group w-full max-w-6xl"
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setMousePosition({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+              });
+            }}
+          >
             <svg
               baseProfile="tiny"
               height="422"
@@ -380,7 +436,7 @@ export const ProvincesSection = () => {
               version="1.2"
               viewBox="0 0 1000 422"
               width="100%"
-              className="max-w-4xl h-auto transition-transform duration-300 group-hover:scale-105 cursor-pointer drop-shadow-lg"
+              className="w-full h-auto min-h-[400px] md:min-h-[500px] lg:min-h-[600px] transition-transform duration-300 group-hover:scale-105 cursor-pointer drop-shadow-lg"
               xmlns="http://www.w3.org/2000/svg"
             >
               <g id="features">
@@ -1424,25 +1480,64 @@ export const ProvincesSection = () => {
               </g>
             </svg>
 
-            {/* Hover bilgi kutusu */}
+            {/* Modern Hover Bilgi Kutusu */}
             {hoveredProvince && (
               <div
-                className="absolute pointer-events-none bg-black bg-opacity-75 text-white px-3 py-2 rounded-lg text-sm z-10"
+                className="absolute pointer-events-none z-20 transform -translate-x-1/2 -translate-y-full"
                 style={{
-                  top: "20%",
-                  left: "50%",
-                  transform: "translateX(-50%)",
+                  left: mousePosition.x,
+                  top: mousePosition.y - 10,
                 }}
               >
-                {provinceNames[hoveredProvince] || "Bilinmeyen İl"}
-                <br />
-                <span className="text-xs text-yellow-300">
-                  {specialProvinces.includes(hoveredProvince)
-                    ? "İlk Deneyen sen ol"
-                    : activeProvinces.includes(hoveredProvince)
-                    ? "1 ürün gönderildi ✓"
-                    : "Yakında..."}
-                </span>
+                <div
+                  className={`px-4 py-3 rounded-lg shadow-lg border min-w-[180px] ${
+                    activeProvinces.includes(hoveredProvince)
+                      ? "bg-orange-500 border-orange-400 text-white"
+                      : "text-white"
+                  }`}
+                  style={{
+                    backgroundColor: activeProvinces.includes(hoveredProvince)
+                      ? undefined
+                      : "#5D4037",
+                    borderColor: activeProvinces.includes(hoveredProvince)
+                      ? undefined
+                      : "#5D4037",
+                  }}
+                >
+                  <div className="font-semibold text-sm mb-1">
+                    {provinceNames[hoveredProvince] || "Bilinmeyen İl"}
+                  </div>
+                  <div
+                    className={`text-xs ${
+                      activeProvinces.includes(hoveredProvince)
+                        ? "text-orange-100"
+                        : "text-gray-200"
+                    }`}
+                  >
+                    {specialProvinces.includes(hoveredProvince)
+                      ? "İlk Deneyen sen ol 🌟"
+                      : activeProvinces.includes(hoveredProvince)
+                      ? "1 ürün gönderildi ✓"
+                      : "Yakında..."}
+                  </div>
+                  {/* Tooltip Ok */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                    <div
+                      className={`w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent ${
+                        activeProvinces.includes(hoveredProvince)
+                          ? "border-t-orange-500"
+                          : ""
+                      }`}
+                      style={{
+                        borderTopColor: activeProvinces.includes(
+                          hoveredProvince
+                        )
+                          ? undefined
+                          : "#5D4037",
+                      }}
+                    ></div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -1452,25 +1547,34 @@ export const ProvincesSection = () => {
         <div className="text-center" ref={statsRef}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="flex flex-col items-center space-y-2 transform transition-all duration-700 hover:scale-105">
-              <div className="text-4xl md:text-5xl font-bold" style={{ color: "#5D4037" }}>
+              <div
+                className="text-4xl md:text-5xl font-bold"
+                style={{ color: "#5D4037" }}
+              >
                 {animatedNumbers.provinces}+
               </div>
               <div className="text-lg font-medium" style={{ color: "#8D6E63" }}>
                 İlde Teslimat
               </div>
             </div>
-            
+
             <div className="flex flex-col items-center space-y-2 transform transition-all duration-700 hover:scale-105">
-              <div className="text-4xl md:text-5xl font-bold" style={{ color: "#5D4037" }}>
+              <div
+                className="text-4xl md:text-5xl font-bold"
+                style={{ color: "#5D4037" }}
+              >
                 {animatedNumbers.orders}+
               </div>
               <div className="text-lg font-medium" style={{ color: "#8D6E63" }}>
                 Sipariş
               </div>
             </div>
-            
+
             <div className="flex flex-col items-center space-y-2 transform transition-all duration-700 hover:scale-105">
-              <div className="text-4xl md:text-5xl font-bold" style={{ color: "#5D4037" }}>
+              <div
+                className="text-4xl md:text-5xl font-bold"
+                style={{ color: "#5D4037" }}
+              >
                 %{animatedNumbers.satisfaction}
               </div>
               <div className="text-lg font-medium" style={{ color: "#8D6E63" }}>
