@@ -12,7 +12,7 @@ export const HoneyHero = () => {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/hero.mp4" type="video/mp4" />
+          <source src="/Bee_Video_Home.mp4" type="video/mp4" />
         </video>
         {/* Video overlay for better text readability */}
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
