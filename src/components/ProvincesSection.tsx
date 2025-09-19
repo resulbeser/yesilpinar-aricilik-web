@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const ProvincesSection = () => {
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [featuresVisible, setFeaturesVisible] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(false);
+  const [animatedNumbers, setAnimatedNumbers] = useState({ provinces: 0, orders: 0, satisfaction: 0 });
+  const statsRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
 
-  // Turuncu renkli olacak iller (ürün gönderdiğimiz ana iller)
+  // Turuncu iller (ürün gönderdiğimiz iller)
   const activeProvinces = [
     "TR34",
     "TR06",
@@ -24,9 +31,9 @@ export const ProvincesSection = () => {
     "TR52",
     "TR20",
     "TR77",
-  ]; // İstanbul, Ankara, İzmir, Bursa, Trabzon, Rize, Gümüşhane, Giresun, Artvin, Ardahan, Kars, Iğdır, Ağrı, Van, Kayseri, Samsun, Ordu, Denizli, Yalova
+  ];
 
-  // Özel iller - beyaz arkaplan, özel mesaj
+  // Beyaz iller (özel iller)
   const specialProvinces = [
     "TR30",
     "TR73",
@@ -90,7 +97,7 @@ export const ProvincesSection = () => {
     "TR39",
     "TR22",
     "TR07",
-  ]; // Hakkari, Şırnak, Bitlis, Siirt, Erzurum, Muş, Bayburt, Mardin, Şanlıurfa, Gaziantep, Kilis, Hatay, Osmaniye, Adana, Kahramanmaraş, Adıyaman, Malatya, Diyarbakır, Batman, Bingöl, Elazığ, Tunceli, Erzincan, Sivas, Tokat, Yozgat, Kırşehir, Nevşehir, Sinop, Kastamonu, Bartın, Karabük, Çorum, Çankırı, Amasya, Zonguldak, Aksaray, Niğde, Kırıkkale, Konya, Mersin, Karaman, Isparta, Burdur, Afyonkarahisar, Eskişehir, Bolu, Düzce, Muğla, Aydın, Uşak, Kütahya, Bilecik, Sakarya, Kocaeli, Balıkesir, Çanakkale, Manisa, Tekirdağ, Kırklareli, Edirne, Antalya
+  ];
 
   const provinceNames: { [key: string]: string } = {
     TR34: "İstanbul",
@@ -176,42 +183,119 @@ export const ProvincesSection = () => {
     TR81: "Düzce",
   };
 
-  const handleProvinceHover = (provinceId: string) => {
+  const handleProvinceHover = (provinceId: string) =>
     setHoveredProvince(provinceId);
-  };
-
-  const handleProvinceLeave = () => {
-    setHoveredProvince(null);
-  };
+  const handleProvinceLeave = () => setHoveredProvince(null);
 
   const getProvinceFill = (provinceId: string) => {
     if (hoveredProvince === provinceId) {
-      if (specialProvinces.includes(provinceId)) {
-        return "#F0F0F0"; // Özel iller hover durumunda açık gri
-      }
-      return "#FFB347"; // Normal iller hover durumunda daha açık turuncu
+      return specialProvinces.includes(provinceId) ? "#F0F0F0" : "#FFB347";
     }
-    if (specialProvinces.includes(provinceId)) {
-      return "#FFFFFF"; // Özel iller beyaz
-    }
-    if (activeProvinces.includes(provinceId)) {
-      return "#FF8C42"; // Ana iller turuncu
-    }
-    return "transparent"; // Diğer iller boş (şeffaf)
+    if (specialProvinces.includes(provinceId)) return "#FFFFFF";
+    if (activeProvinces.includes(provinceId)) return "#FF8C42";
+    return "transparent";
   };
 
   const getProvinceStroke = (provinceId: string) => {
-    if (specialProvinces.includes(provinceId)) {
-      return "#FF8C42"; // Özel iller turuncu border
-    }
-    if (
-      activeProvinces.includes(provinceId) ||
-      hoveredProvince === provinceId
-    ) {
-      return "#D4AF37"; // Altın rengi border
-    }
-    return "#E5E5E5"; // Açık gri border
+    if (specialProvinces.includes(provinceId)) return "#FF8C42";
+    if (activeProvinces.includes(provinceId) || hoveredProvince === provinceId)
+      return "#D4AF37";
+    return "#E5E5E5";
   };
+
+  // Animasyon fonksiyonu
+  const animateNumber = (start: number, end: number, duration: number, callback: (value: number) => void) => {
+    const startTime = performance.now();
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const currentValue = Math.floor(start + (end - start) * easeOut);
+      callback(currentValue);
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
+  };
+
+  // Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true);
+            // Animasyonları başlat
+            setTimeout(() => {
+              animateNumber(0, 15, 1500, (value) => {
+                setAnimatedNumbers(prev => ({ ...prev, provinces: value }));
+              });
+            }, 200);
+            
+            setTimeout(() => {
+              animateNumber(0, 20, 1500, (value) => {
+                setAnimatedNumbers(prev => ({ ...prev, orders: value }));
+              });
+            }, 400);
+            
+            setTimeout(() => {
+              animateNumber(0, 100, 1500, (value) => {
+                setAnimatedNumbers(prev => ({ ...prev, satisfaction: value }));
+              });
+            }, 600);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  // Özellikler animasyonu için Intersection Observer
+  useEffect(() => {
+    const featuresObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setFeaturesVisible(true);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    if (featuresRef.current) {
+      featuresObserver.observe(featuresRef.current);
+    }
+
+    return () => featuresObserver.disconnect();
+  }, []);
+
+  // Başlık animasyonu için Intersection Observer
+  useEffect(() => {
+    const headerObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setHeaderVisible(true);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    if (headerRef.current) {
+      headerObserver.observe(headerRef.current);
+    }
+
+    return () => headerObserver.disconnect();
+  }, []);
 
   return (
     <section
@@ -220,8 +304,10 @@ export const ProvincesSection = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Başlık */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center space-x-3 mb-6">
+        <div className="text-center mb-16" ref={headerRef}>
+          <div className={`flex items-center justify-center space-x-3 mb-6 transform transition-all duration-1000 ${
+            headerVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+          }`}>
             <span className="text-4xl">🚚</span>
             <div className="h-6 w-px bg-gray-300"></div>
             <span className="text-4xl">📦</span>
@@ -230,10 +316,13 @@ export const ProvincesSection = () => {
           </div>
 
           <h2
-            className="text-4xl lg:text-5xl font-bold mb-6"
+            className={`text-4xl lg:text-5xl font-bold mb-6 transform transition-all duration-1000 ${
+              headerVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
             style={{
               color: "#5D4037",
               fontFamily: "'The Seasons', serif",
+              transitionDelay: '200ms'
             }}
           >
             Türkiye'de{" "}
@@ -241,28 +330,40 @@ export const ProvincesSection = () => {
           </h2>
 
           <p
-            className="text-lg max-w-3xl mx-auto mb-8"
-            style={{ color: "#8D6E63" }}
+            className={`text-lg max-w-3xl mx-auto mb-8 transform transition-all duration-1000 ${
+              headerVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
+            style={{ 
+              color: "#8D6E63",
+              transitionDelay: '400ms'
+            }}
           >
             Doğal ve organik bal ürünlerimizi Türkiye'nin dört bir yanına
             güvenli ve hızlı bir şekilde gönderiyoruz.
           </p>
 
           <div
+            ref={featuresRef}
             className="flex items-center justify-center space-x-6 text-sm mb-12"
             style={{ color: "#8D6E63" }}
           >
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 transform transition-all duration-700 ${
+              featuresVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`} style={{ transitionDelay: '200ms' }}>
               <span className="text-green-600">✓</span>
               <span>Hızlı Teslimat</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 transform transition-all duration-700 ${
+              featuresVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`} style={{ transitionDelay: '400ms' }}>
               <span className="text-green-600">✓</span>
               <span>Güvenli Ambalaj</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-2 transform transition-all duration-700 ${
+              featuresVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`} style={{ transitionDelay: '600ms' }}>
               <span className="text-green-600">✓</span>
-              <span>Kapıda Ödeme</span>
+              <span>Trabzon İçi Kapıda Ödeme</span>
             </div>
           </div>
         </div>
@@ -1347,23 +1448,34 @@ export const ProvincesSection = () => {
           </div>
         </div>
 
-        {/* Alt Bilgi */}
-        <div className="text-center">
-          <div
-            className="inline-flex items-center space-x-4 px-8 py-4 rounded-xl"
-            style={{
-              backgroundColor: "#FFF8E7",
-              border: "1px solid #D4AF37",
-            }}
-          >
-            <span className="text-2xl">📞</span>
-            <div className="text-left">
-              <p className="font-semibold" style={{ color: "#5D4037" }}>
-                Özel teslimat bilgisi almak için
-              </p>
-              <p className="text-sm" style={{ color: "#8D6E63" }}>
-                Bizi arayın, size en uygun teslimat seçeneğini bulalım.
-              </p>
+        {/* Alt İstatistikler */}
+        <div className="text-center" ref={statsRef}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="flex flex-col items-center space-y-2 transform transition-all duration-700 hover:scale-105">
+              <div className="text-4xl md:text-5xl font-bold" style={{ color: "#5D4037" }}>
+                {animatedNumbers.provinces}+
+              </div>
+              <div className="text-lg font-medium" style={{ color: "#8D6E63" }}>
+                İlde Teslimat
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-center space-y-2 transform transition-all duration-700 hover:scale-105">
+              <div className="text-4xl md:text-5xl font-bold" style={{ color: "#5D4037" }}>
+                {animatedNumbers.orders}+
+              </div>
+              <div className="text-lg font-medium" style={{ color: "#8D6E63" }}>
+                Sipariş
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-center space-y-2 transform transition-all duration-700 hover:scale-105">
+              <div className="text-4xl md:text-5xl font-bold" style={{ color: "#5D4037" }}>
+                %{animatedNumbers.satisfaction}
+              </div>
+              <div className="text-lg font-medium" style={{ color: "#8D6E63" }}>
+                Müşteri Memnuniyeti
+              </div>
             </div>
           </div>
         </div>
